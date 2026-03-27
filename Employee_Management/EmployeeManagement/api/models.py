@@ -15,7 +15,7 @@ class User(AbstractUser):
 
 class Team(models.Model):
     teamName = models.CharField(max_length=200)
-    leader = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
+    leader = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, related_name="leading_team")
 
 
 class Attendance(models.Model):
