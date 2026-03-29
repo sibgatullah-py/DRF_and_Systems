@@ -132,3 +132,22 @@ class TeamWorkLogView(generics.ListAPIView):
 
 # <-------------------------------------------- BOSS VIEWS (FULL ACCESS) STARTS -------------------------------------------------->
 
+#All Users
+class AllUsersView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsBoss]
+    
+#All Attendance
+class AllAttendanceView(generics.ListAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+    permission_classes = [IsBoss]
+    
+#All Worklogs 
+class AllWorkLogView(generics.ListAPIView):
+    queryset = WorkLog.objects.all()
+    serializer_class = WorkLogSerializer
+    permission_classes = [IsBoss]
+    
+# <-------------------------------------------- BOSS VIEWS (FULL ACCESS) ENDS ---------------------------------------------------->
