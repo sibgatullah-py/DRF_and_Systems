@@ -90,6 +90,45 @@ class WorkLogCreateView(generics.CreateAPIView):
     def perform_create(self, serializer): #This confirms the user is the logged in user preventing faking as other user
         serializer.save(user=self.request.user)
         
-# <-------------------------------------------- Member Self Data APIs Ends ------------------------------------------------------>
+# <-------------------------------------------- Member Self Data APIs Ends -------------------------------------------------------->
 
+
+# <-------------------------------------------- LEADER VIEWS (TEAM ISOLATION) STARTS ---------------------------------------------->
+
+#Team Members
+class TeamMembersView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsLeader]
+    
+    # this get_queryset method will fetch all users who are members of the same team as the logged-in user(leader)
+    def get_queryset(self):
+        return self.request.user.team.members.all() #Leader only sees his team his members
+
+#Team Attendance
+class TeamAttendanceView(generics.ListAPIView): #ListAPIView provides a read-only endpoint to list objects
+    serializer_class = AttendanceSerializer
+    permission_classes = [IsLeader]
+    
+    #user__team means: follow the user ForeignKey from Attendance to User, then the team ForeignKey from User to Team.
+    def get_queryset(self): #Filters only this team
+        return Attendance.objects.filter(
+            user__team = self.request.user.team #user__team is called a double underscore lookup in Django ORM. IT's used to filter across model relationships
+        )
+        
+#Team Worklog
+class TeamWorkLogView(generics.ListAPIView):
+    serializer_class = WorkLogSerializer
+    permission_classes = [IsLeader]
+    
+    #user__team, this is called (Multi-tenant data isolation) *important concept 
+    def get_queryset(self):
+        return WorkLog.objects.filter(
+            user__team = self.request.user.team
+        )
+    
+        
+# <-------------------------------------------- LEADER VIEWS (TEAM ISOLATION) ENDS ----------------------------------------------->
+
+
+# <-------------------------------------------- BOSS VIEWS (FULL ACCESS) STARTS -------------------------------------------------->
 
