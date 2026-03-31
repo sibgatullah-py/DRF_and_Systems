@@ -12,4 +12,5 @@ urlpatterns = [
     path("team-members/", TeamMembersView.as_view()),
     path("team-attendance/", TeamAttendanceView.as_view()),
     path("team-worklogs/", TeamWorkLogView.as_view()),
+    
 ]

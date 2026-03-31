@@ -25,4 +25,7 @@ urlpatterns = [
     # This is a login token generator
     path('api/token/', TokenObtainPairView.as_view()), # method of simple JWT 
     path('api/token/refresh/', TokenRefreshView.as_view()), # method of simple JWT
+    
+    path('api/users/', include('api.users.urls')),
+    path('api/teams/', include('api.teams.urls')),
 ]

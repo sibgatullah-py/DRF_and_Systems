@@ -149,5 +149,58 @@ class AllWorkLogView(generics.ListAPIView):
     queryset = WorkLog.objects.all()
     serializer_class = WorkLogSerializer
     permission_classes = [IsBoss]
+
+#All Team list
+class TeamListView(generics.ListAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [IsBoss]
+
+#Employee Creation
+class CreateUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsBoss]
+    
+#Team Creation
+class CreateTeamView(generics.CreateAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [IsBoss]
+    
+#Assigning Team Leader
+class AssignLeaderView(APIView):
+    permission_classes = [IsBoss]
+    
+    def patch(self, request, team_id):
+        try:
+            team = Team.objects.get(id=team_id)
+            user = User.objects.get(id = request.data.get("leader"))
+        except:
+            return Response({"error": "Invalid ID"}, status=400)
+        
+        team.leader = user
+        team.save()
+        
+        return Response({"message": "Leader Assigned"})
+
+#Assign Team Members    
+class AssignMemberView(APIView):
+    permission_classes = [IsBoss]
+
+    def patch(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            team = Team.objects.get(id=request.data.get("team"))
+        except:
+            return Response({"error": "Invalid ID"}, status=400)
+
+        if user.role != "MEMBER":
+            return Response({"error": "Only members can be assigned"}, status=400)
+
+        user.team = team
+        user.save()
+
+        return Response({"message": "Member assigned to team"})
     
 # <-------------------------------------------- BOSS VIEWS (FULL ACCESS) ENDS ---------------------------------------------------->
